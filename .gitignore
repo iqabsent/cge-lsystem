@@ -11,3 +11,13 @@
 *.lai
 *.la
 *.a
+
+# Custom stuff
+*.sdf
+*.sln
+*.suo
+*.vcxproj.filters
+*.vcxproj.user
+Debug
+ipch
+
