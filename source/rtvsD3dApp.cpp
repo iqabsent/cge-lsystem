@@ -22,7 +22,6 @@
 
 
 
-
 ////////////////////////////////////////////////////////////////////////////////
 
 
@@ -222,31 +221,36 @@ bool rtvsD3dApp::display (LPDIRECT3DDEVICE9 pd3dDevice)
 //MODIFY START
 		// select angle of increment from a look up table
 		// where the array index == current key clicked
-		float angle[8] = { 60, 30, 20, 15, 10, 5, 2, 1 };
-		int angIncr = (int)angle[currentKeyClicked];
+		//float angle[8] = { 60, 30, 20, 15, 10, 5, 2, 1 };
+		//int angIncr = (int)angle[currentKeyClicked];
 
 		// draw a line rotating around the z axis
-		Vertex s, e;
-		float rdn = 3.141592f / 180.0f;
-		for (int a=0; a<360; a+=angIncr)
-		{
-			// update start and end vertex
-			float ang = float(a)*rdn;
-			float cosAng = cos(ang);
-			float sinAng = sin(ang);
-			s.z = 0;
-			s.x = 2  * cosAng;
-			s.y = 2  * sinAng;
-			e.z = 0;
-			e.x = 8 * cosAng;
-			e.y = 8 * sinAng;
+		Vertex s = {0, 0, 0};
+    Vertex e = {0, 4, 0};
 
-			// update vertex buffer
-			updateVertexBuffer(s, e);
+    updateVertexBuffer(s, e);
+    pd3dDevice->DrawPrimitive( D3DPT_LINELIST, 0, 1 );
+
+    //for (int i = 0; i < 360; i++) {
+    //  e = f(s, i, 1);
+    //  updateVertexBuffer(s, e);
+    //  pd3dDevice->DrawPrimitive( D3DPT_LINELIST, 0, 1 );
+    //}
+
+    e = f(s, 0, 1);
+    updateVertexBuffer(s, e);
+    pd3dDevice->DrawPrimitive( D3DPT_LINELIST, 0, 1 );
+    e = f(s, 90, 1);
+    updateVertexBuffer(s, e);
+    pd3dDevice->DrawPrimitive( D3DPT_LINELIST, 0, 1 );
+    e = f(s, 180, 1);
+    updateVertexBuffer(s, e);
+    pd3dDevice->DrawPrimitive( D3DPT_LINELIST, 0, 1 );
+    e = f(s, 270, 1);
+    updateVertexBuffer(s, e);
+    pd3dDevice->DrawPrimitive( D3DPT_LINELIST, 0, 1 );
+
 //MODIFY END
-			// draw a single line
-			pd3dDevice->DrawPrimitive( D3DPT_LINELIST, 0, 1 );
-		}
 	}
 
 
@@ -256,8 +260,24 @@ bool rtvsD3dApp::display (LPDIRECT3DDEVICE9 pd3dDevice)
 
 }
 
+const float NODE_LENGTH = 4;
 
+Vertex rtvsD3dApp::f (Vertex start_point, float rotation, float scale_factor) {
+  Vertex node = {0, NODE_LENGTH, 0};
+  Vertex new_node = {node.x * scale_factor, node.y * scale_factor, node.z * scale_factor};
+  new_node = rotateOnZ(new_node, rotation);
+  Vertex end_point = {start_point.x + new_node.x, start_point.y + new_node.y, start_point.z + new_node.z};
+  return end_point;
+}
 
+Vertex rtvsD3dApp::rotateOnZ (Vertex vertex, float angle) {
+  Vertex rotated = {0, 0, 0};
+  float cosAngle = cosf(angle*(3.14159265f/180));
+  float sinAngle = sinf(angle*(3.14159265f/180));
+  rotated.x -= vertex.x * cosAngle + vertex.y * sinAngle;
+  rotated.y = vertex.x * sinAngle - vertex.y * cosAngle;
+  return rotated;
+}
 
 // ---------- framework : setup ----------
 

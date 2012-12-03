@@ -105,6 +105,10 @@ public:
 	void getSpin	(float*, float*);
 	void setSpin	(float, float);
 
+  // lsystem
+  Vertex f (Vertex, float, float);
+  Vertex rotateOnZ (Vertex, float);
+
 };
 
 
