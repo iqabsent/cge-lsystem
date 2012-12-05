@@ -168,18 +168,18 @@ bool rtvsD3dApp::display (LPDIRECT3DDEVICE9 pd3dDevice)
 {
 
  	// clear backbuffers
-    pd3dDevice->Clear( 0,
-		NULL,
-		D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
-		D3DCOLOR_COLORVALUE(0.35f,0.53f,0.7f,1.0f),
-		1.0f,
-		0);
+  pd3dDevice->Clear( 0,
+	NULL,
+	D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
+	D3DCOLOR_COLORVALUE(0.35f,0.53f,0.7f,1.0f),
+	1.0f,
+	0);
 
-   // local matrices
-    D3DXMATRIX matView;
-    D3DXMATRIX matRotation;
-    D3DXMATRIX matTranslation;
-    D3DXMATRIX matWorld;
+  // local matrices
+  D3DXMATRIX matView;
+  D3DXMATRIX matRotation;
+  D3DXMATRIX matTranslation;
+  D3DXMATRIX matWorld;
 
 
 	// display flag
@@ -187,8 +187,8 @@ bool rtvsD3dApp::display (LPDIRECT3DDEVICE9 pd3dDevice)
 
 
 	// view matrix
-    D3DXMatrixIdentity( &matView );
-    pd3dDevice->SetTransform( D3DTS_VIEW, &matView );
+  D3DXMatrixIdentity( &matView );
+  pd3dDevice->SetTransform( D3DTS_VIEW, &matView );
 
 
 	// rotation matrix
@@ -226,7 +226,7 @@ bool rtvsD3dApp::display (LPDIRECT3DDEVICE9 pd3dDevice)
 
 		// draw a line rotating around the z axis
 		Vertex s = {0, 0, 0};
-    Vertex e = {0, 4, 0};
+    Vertex e = {0, 2, 0};
 
     updateVertexBuffer(s, e);
     pd3dDevice->DrawPrimitive( D3DPT_LINELIST, 0, 1 );
@@ -250,9 +250,21 @@ bool rtvsD3dApp::display (LPDIRECT3DDEVICE9 pd3dDevice)
     updateVertexBuffer(s, e);
     pd3dDevice->DrawPrimitive( D3DPT_LINELIST, 0, 1 );
 
+    //premise = X
+    //rules[]
+    //X->F-FX
+    //F->F+F
+    //generations = 6
+
+    //turtle(symbol, generation) {
+    //  run rules on symbol
+    //}
+
+    //generate()
+    //draw()
+
 //MODIFY END
 	}
-
 
 
 	// ok
@@ -260,7 +272,7 @@ bool rtvsD3dApp::display (LPDIRECT3DDEVICE9 pd3dDevice)
 
 }
 
-const float NODE_LENGTH = 4;
+const float NODE_LENGTH = 2;
 
 Vertex rtvsD3dApp::f (Vertex start_point, float rotation, float scale_factor) {
   Vertex node = {0, NODE_LENGTH, 0};
