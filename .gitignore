@@ -16,8 +16,10 @@
 *.sdf
 *.sln
 *.suo
+*.vcxproj
 *.vcxproj.filters
 *.vcxproj.user
+*.opensdf
 Debug
 ipch
 

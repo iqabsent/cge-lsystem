@@ -64,7 +64,6 @@ class rtvsD3dApp
 
 	DWORD	_id;
 
-
 public:
 
 
@@ -81,6 +80,7 @@ public:
 	float					fSpinX;
 	float					fSpinY;
 	char*					vectorName;
+	LPDIRECT3DDEVICE9		pd3dDeviceCache;
 
 	// ---- methods ----
 
@@ -106,6 +106,7 @@ public:
 	void setSpin	(float, float);
 
   // lsystem
+  Vertex draw (Vertex, float);
   Vertex f (Vertex, float, float);
   Vertex rotateOnZ (Vertex, float);
 
