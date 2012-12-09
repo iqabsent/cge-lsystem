@@ -77,11 +77,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="header\lSysApp.h" />
     <ClInclude Include="header\rtvsD3dApp.h" />
     <ClInclude Include="header\rtvsD3dWinLite.h" />
     <ClInclude Include="header\vector.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\lSysApp.cpp" />
     <ClCompile Include="source\rtvsD3dApp.cpp" />
     <ClCompile Include="source\rtvsD3dWinLite.cpp" />
     <ClCompile Include="source\vector.cpp" />

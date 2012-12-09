@@ -81,7 +81,7 @@ public:
 	float					fSpinY;
 	char*					vectorName;
 	LPDIRECT3DDEVICE9		pd3dDeviceCache;
-
+ 
 	// ---- methods ----
 
 	// constructor/destructor
@@ -104,11 +104,6 @@ public:
 	// other
 	void getSpin	(float*, float*);
 	void setSpin	(float, float);
-
-  // lsystem
-  Vertex draw (Vertex, float);
-  Vertex f (Vertex, float, float);
-  Vertex rotateOnZ (Vertex, float);
 
 };
 

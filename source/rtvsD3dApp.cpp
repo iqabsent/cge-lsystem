@@ -25,8 +25,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-
-
 // ---------- constructor ----------
 
 /*!
@@ -43,7 +41,7 @@ rtvsD3dApp::rtvsD3dApp (int id)
 {
 
 	// initialise
-    ZeroMemory( this, sizeof(rtvsD3dApp) );
+    //ZeroMemory( this, sizeof(rtvsD3dApp) );
 
 	// store id
 	_id = id;
@@ -226,39 +224,7 @@ bool rtvsD3dApp::display (LPDIRECT3DDEVICE9 pd3dDevice)
 		//float angle[8] = { 60, 30, 20, 15, 10, 5, 2, 1 };
 		//int angIncr = (int)angle[currentKeyClicked];
 
-		Vertex s = {0, 0, 0};
-    draw(s, 0);
-
-	//rules
-	//rec(symbol_string, angle)
-	//	if !n or !digested
-	//		keep angle
-	//		!n: rules to symbol, n++
-	//		foreach symbol
-	//			action / recurse (action for [ = recurse with [] content)
-	//	else
-	//		draw
-
-	/*
-    for (int i = 0; i < 360; i++) {
-      e = f(s, i, 1);
-      updateVertexBuffer(s, e);
-      pd3dDevice->DrawPrimitive( D3DPT_LINELIST, 0, 1 );
-    }
-	*/
-
-    //premise = X
-    //rules[]
-    //X->F-FX
-    //F->F+F
-    //generations = 6
-
-    //turtle(symbol, generation) {
-    //  run rules on symbol
-    //}
-
-    //generate()
-    //draw()
+    //generate(axiom, axiom_length, generation, start_point, orientation);
 
 //MODIFY END
 	}
@@ -267,30 +233,6 @@ bool rtvsD3dApp::display (LPDIRECT3DDEVICE9 pd3dDevice)
 	// ok
 	return true;
 
-}
-
-const float NODE_LENGTH = 2;
-
-Vertex rtvsD3dApp::draw(Vertex start_point, float angle) {
-	if (pd3dDeviceCache == NULL) return start_point;
-	Vertex node = {0, NODE_LENGTH, 0};
-	Vertex new_node = {node.x, node.y, node.z};
-	new_node = rotateOnZ(new_node, angle);
-	Vertex end_point = {start_point.x + new_node.x, start_point.y + new_node.y, start_point.z + new_node.z};
-	updateVertexBuffer(start_point, end_point);
-	pd3dDeviceCache->DrawPrimitive( D3DPT_LINELIST, 0, 1 );
-	return end_point;
-}
-
-Vertex rtvsD3dApp::f (Vertex start_point, float rotation, float scale_factor) { return start_point; }
-
-Vertex rtvsD3dApp::rotateOnZ (Vertex vertex, float angle) {
-  Vertex rotated = {0, 0, 0};
-  float cosAngle = cosf(angle*(3.14159265f/180));
-  float sinAngle = sinf(angle*(3.14159265f/180));
-  rotated.x = vertex.x * cosAngle + vertex.y * sinAngle;
-  rotated.y -= vertex.x * sinAngle - vertex.y * cosAngle;
-  return rotated;
 }
 
 // ---------- framework : setup ----------

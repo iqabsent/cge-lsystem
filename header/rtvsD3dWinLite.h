@@ -28,7 +28,7 @@
 // ---------- include application header ----------
 
 #include "../header/rtvsD3dApp.h"
-
+#include "../header/lSysApp.h"
 
 
 
@@ -80,8 +80,8 @@ HRESULT		setupDX(void);
 
 // ---- application ----
 
-rtvsD3dApp*	g_app;
-
+lSysApp*	g_app;
+//rtvsD3dApp*	g_app;
 
 
 

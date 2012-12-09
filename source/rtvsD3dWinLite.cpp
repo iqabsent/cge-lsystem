@@ -118,7 +118,7 @@ int WINAPI WinMain( HINSTANCE hInstance,
     UpdateWindow( g_hWnd );
 
 	// create application
-	g_app = new rtvsD3dApp(0);
+	g_app = new lSysApp(0);
 
 	// non-device one time application setup 
 	g_app->setup();
@@ -383,13 +383,16 @@ void display( void )
 {
 
 	// begin
-    g_pd3dDevice->BeginScene();
+  g_pd3dDevice->BeginScene();
+
+  // put tree in buffer
+  //g_app->bufferTree(g_pd3dDevice);
 
 	// display
 	g_app->display(g_pd3dDevice);
 
 	// end
-    g_pd3dDevice->EndScene();
+  g_pd3dDevice->EndScene();
 
 	// present
     g_pd3dDevice->Present( NULL, NULL, NULL, NULL );
@@ -426,7 +429,7 @@ void setup( void )
 
     D3DDISPLAYMODE d3ddm;
     g_pD3D->GetAdapterDisplayMode( D3DADAPTER_DEFAULT, &d3ddm );
-    ZeroMemory( &g_d3dpp, sizeof(g_d3dpp) );
+    //ZeroMemory( &g_d3dpp, sizeof(g_d3dpp) );
 
 
 	// ---- set present parameters ----
