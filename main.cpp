@@ -71,8 +71,8 @@ HRESULT setupDX ( void )
 	D3DCOLOR_COLORVALUE( 0.2f, 0.2f, 0.2f, 1.0f ) );
   
   // ---- texture states ----
-  g_pd3dDevice->SetSamplerState( 0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR );
-  g_pd3dDevice->SetSamplerState( 0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR );
+  //g_pd3dDevice->SetSamplerState( 0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR );
+  //g_pd3dDevice->SetSamplerState( 0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR );
 
   // ---- application ----
 	g_app->setupDX(g_pd3dDevice);

@@ -11,6 +11,7 @@
 #include <Vector>
 #include <string>
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <map>
 
@@ -20,8 +21,9 @@ struct Vertex {
 };
 
 struct Config {
-  byte generation;
+  int generation;
   float angle;
+  float scale;
   std::string axiom;
   std::map<char, std::string> rules;
 };
@@ -46,6 +48,10 @@ public:
   std::string cfg_loaded;
   Config cfg;
 
+  ID3DXFont* pFont;
+	D3DCOLOR fontCol;
+  bool show_text;
+
   std::vector<Vertex> vertices;
 
   RTVS(){
@@ -59,6 +65,7 @@ public:
     currentKeyClicked = 1;
 
     readCfg("cfgs/1.txt");
+    show_text = true;
 
     start_point.x = 0;
     start_point.y = 0;
@@ -84,6 +91,7 @@ public:
     size_t found;
 
     cfg.angle = 0;
+    cfg.scale = 1;
     cfg.axiom = "f";
     cfg.rules.clear();
     cfg.generation = 1;
@@ -98,6 +106,8 @@ public:
         cfg.generation = atoi(line.substr(2, line.length() - 2).c_str());
       } else if(line[0] == 'd') {
         cfg.angle = atof(line.substr(2, line.length() - 2).c_str());
+      } else if(line[0] == 's') {
+        cfg.scale = atof(line.substr(2, line.length() - 2).c_str());
       } else {
         found = line.find("->");
         if(found != std::string::npos) {
@@ -218,11 +228,79 @@ public:
     // ---- ambient light ----
 	  pd3dDevice->SetRenderState( D3DRS_AMBIENT,D3DCOLOR_COLORVALUE( 0.3, 0.3, 0.3, 1.0));
 
+    // ---- FONT ----
+	  fontCol = D3DCOLOR_COLORVALUE(1,1,1,1);
+	  D3DXCreateFont(
+		  pd3dDevice,
+		  30,								// height in pixels
+		  0,								// width in pixels (0 for default)
+		  400,							// thickness, 0-1000 OR FW_THIN (100), FW_NORMAL (400), FW_BOLD (700), FW_HEAVY (900)
+		  0,								// number of MipMaps to create. 0 creates a full chain - no scaling use 1
+		  false,							// 0/1 - true/false, do you want Italics
+		  DEFAULT_CHARSET,				// character Set - (Arabic, Greek, etc)
+		  OUT_DEFAULT_PRECIS,				// how precisely the output must match the font
+		  ANTIALIASED_QUALITY,			// ANTIALIASED_QUALITY, DEFAULT_QUALITY, DRAFT_QUALITY, and PROOF_QUALITY
+		  DEFAULT_PITCH | FF_DONTCARE,	// font pitch 
+		  (LPCWSTR)"Arial",						// name of the required font or "" for system best match
+		  &pFont);
+
     // set up stuff for l-system
     generateTree();
     bufferTree(pd3dDevice);
 
     return true;
+  }
+
+  std::string str(int in) {
+    std::stringstream ss;
+    ss << in;
+    return ss.str();
+  }
+
+  std::string str(char in) {
+    std::stringstream ss;
+    ss << in;
+    return ss.str();
+  }
+
+  std::string str(float in) {
+    std::stringstream ss;
+    ss << in;
+    return ss.str();
+  }
+
+  void printStat(int line, const char * text) {
+    int top = line * 40;
+    int bottom = line * 40 + 100;
+    RECT rect = { 40, top, 900, bottom };
+    pFont->DrawTextA(0,text,-1,&rect,0,fontCol);
+  }
+
+  void printStats() {
+    int line = 1;
+    std::string stat = "Axiom: " + cfg.axiom;
+    printStat(line++, stat.c_str());
+
+    std::map<char,std::string> rules = cfg.rules;
+    std::map<char,std::string>::iterator it;
+    for ( it=rules.begin(); it != rules.end(); it++ ) {
+      std::string key = str((*it).first);
+      std::string value = (*it).second;
+      stat = key + " -> " + value;
+      printStat(line++, stat.c_str());  
+    }
+
+    stat = "Angle: " + str(cfg.angle);
+    printStat(line++, stat.c_str());
+
+    stat = "Generations: " + str(cfg.generation);
+    printStat(line++, stat.c_str());
+
+    stat = "Scale: " + str(cfg.scale);
+    printStat(line++, stat.c_str());
+
+    stat = "Lines: " + str(line_count);
+    printStat(line++, stat.c_str());
   }
   
   bool display(LPDIRECT3DDEVICE9 pd3dDevice) {
@@ -235,6 +313,7 @@ public:
     D3DXMATRIX matRotation;
     D3DXMATRIX matTranslation;
     D3DXMATRIX matWorld;
+    D3DXMATRIX matScale;
     
 	  // display flag
 	  bool lines = true;
@@ -250,9 +329,13 @@ public:
 	  pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
     pd3dDevice->SetRenderState(D3DRS_CLIPPING, FALSE);
 
+    // scaling
+    D3DXMatrixIdentity( &matScale );
+    D3DXMatrixScaling( &matScale, cfg.scale, cfg.scale, cfg.scale );
+
 	  // locate
 	  D3DXMatrixTranslation( &matTranslation, 0, -20, 50 );
-	  matWorld = matRotation * matTranslation;
+	  matWorld = matRotation * matScale * matTranslation; 
 	  pd3dDevice->SetTransform( D3DTS_WORLD, &matWorld );
     
 	  // IF lines THEN
@@ -265,11 +348,10 @@ public:
 		  pd3dDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 		  pd3dDevice->SetMaterial( &lineMtrl );
 
-		  // update key clicked
-		  //updateKeyboard(pd3dDevice); // <= also go modify that .. for hotkeys (it's further down in this file)
-
 	    pd3dDevice->DrawPrimitive( D3DPT_LINELIST, 0, line_count );
 	  }
+
+    if(show_text) printStats();
 
 	  return true;
   }
@@ -277,6 +359,8 @@ public:
   bool updateKeyboard(LPDIRECT3DDEVICE9 pd3dDevice) {
     currentKeyClicked = 0;
     // get key clicked
+    if(GetAsyncKeyState(VK_SPACE) & 0x8000f)
+		  show_text = !show_text;
 	  if(GetAsyncKeyState('1') & 0x8000f)
 		  currentKeyClicked = 1;
 	  else if(GetAsyncKeyState('2') & 0x8000f)
@@ -301,6 +385,10 @@ public:
       currentKeyClicked = 26;
     else if (GetAsyncKeyState(VK_DOWN) & 0x8000f)
       currentKeyClicked = 28;
+    else if (GetAsyncKeyState(VK_ADD) & 0x8000f)
+      currentKeyClicked = 62;
+    else if (GetAsyncKeyState(VK_SUBTRACT) & 0x8000f)
+      currentKeyClicked = 64;
 
     if(currentKeyClicked == 0) return true;
 
@@ -325,27 +413,39 @@ public:
     }
 
     switch(currentKeyClicked) {
-      case 25:
+      case 25:  // left
           if(cfg.angle > 0.1) {
             cfg.angle -= 0.1;
             regen = true;
           }
         break;
-      case 27:
+      case 27:  // right
           if(cfg.angle < 359.9) {
             cfg.angle += 0.1;
             regen = true;
           }
         break;
-      case 26:
-          if(cfg.generation < 10) {
+      case 26:  // up
+          if(cfg.generation < 15) {
             cfg.generation += 1;
             regen = true;
           }
         break;
-      case 28:
+      case 28: // down
           if(cfg.generation >= 2) {
             cfg.generation -= 1;
+            regen = true;
+          }
+        break;
+      case 62: // plus
+          if(cfg.scale <= 10) {
+            cfg.scale += 0.01;
+            regen = true;
+          }
+        break;
+      case 64: // minus
+          if(cfg.scale >= 0.01) {
+            cfg.scale -= 0.01;
             regen = true;
           }
         break;
