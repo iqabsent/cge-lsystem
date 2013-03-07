@@ -1,4 +1,4 @@
-# MScCGE-gp-2011 #
+# MSc CGE (Maths and Graphics) L-System #
 ==============
 
 Title: Willem L-System
